@@ -24,7 +24,7 @@ func main(){
 	}
 }
 
-func isValidEmail(email string)  {
+func isValidEmail(email string) (bool, bool, bool, string, string)  {
 	var hasMX, hasSPF, hasDMARC bool
 	var dmarcRecords, spfRecords string
 	//mxrecords
@@ -47,18 +47,19 @@ func isValidEmail(email string)  {
 
 
 	//dmarcrecords
-	dmarcRecordsList, err := net.LookupTXT(email)
+	dmarcDomain := "_dmarc." + email
+	dmarcRecordsList, err := net.LookupTXT(dmarcDomain)
 	if err ==nil{
 		for _ , text:= range dmarcRecordsList{
-			if strings.HasPrefix(text, "v=dmarc1"){
+			if strings.HasPrefix(strings.ToLower(text), "v=dmarc1"){
 				hasDMARC = true
 				dmarcRecords = text
-				break
+				break	
 			}
 		}
 	}
 
 
 	fmt.Printf("Email: %s, hasMX: %t, hasSPF: %t, hasDMARC: %t, dmarcRecords: %s, spfRecords: %s\n", email, hasMX, hasSPF, hasDMARC, dmarcRecords, spfRecords)
-
+	return hasMX, hasSPF, hasDMARC, dmarcRecords, spfRecords
 }
