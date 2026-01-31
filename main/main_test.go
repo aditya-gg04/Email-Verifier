@@ -64,3 +64,20 @@ func TestIsValidEmail(t *testing.T) {
 	})
 }
 
+func Benchmark(b *testing.B){
+	testEmails:=[]string {
+		"gmail.com",
+		"yahoo.com",
+		"invalid-domain-xyz-123.com",
+		"notanemail",
+		"",
+	}
+	for _, email := range testEmails {
+		b.Run(email, func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				isValidEmail(email)
+			}
+		})
+	}
+
+}
